@@ -2,32 +2,32 @@ package com.StudentLibrary.Studentlibrary.Repositories;
 
 import com.StudentLibrary.Studentlibrary.Model.Book;
 import com.StudentLibrary.Studentlibrary.Model.Genre;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Transactional
-public interface BookRepository extends JpaRepository<Book,Integer> {
-    @Modifying
+@Repository
+public interface BookRepository extends MongoRepository<Book,String> {
     @Query("update Book b set b.card=:#{#book?.card},b.available=:#{#book?.available} where b.id=:#{#book?.id}")
     int updateBook(@RequestParam("book") Book book);
 
 
-    @Query("select b from Book b where b.genre=:genre and b.available=:isAvailable and b.author in (select a from Author a where a.name=:author)")
+    @Query("{$and :[{genre: ?0},{author.name: ?1}] }")
     List<Book> findBooksByGenre_Author(@Param("genre") Genre genre, @Param("author") String author, @Param("isAvailable") boolean isAvailable);
 
-    @Query("select b from Book b where b.genre=:genre and b.available=:isAvailable")
+    @Query("{$and :[{genre: ?0},{isAvailable: ?1}] }")
     List<Book> findBooksByGenre(@Param("genre") Genre genre,@Param("isAvailable") boolean isAvailable);
 
-    @Query("select b from Book b where b.available=:isAvailable and b.author in(select a from Author a where a.name=:author)")
+    @Query("{$and :[{author.name: ?0},{isAvailable: ?1}] }")
     List<Book> findBooksByAuthor(@Param("author") String author,@Param("isAvailable") boolean isAvailable);
 
-    @Query("select b from Book b where b.available=:isAvailable")
+    @Query("{available:?0}")
     List<Book> findBooksByAvailability(@Param("isAvailable") boolean isAvailable);
 
 }

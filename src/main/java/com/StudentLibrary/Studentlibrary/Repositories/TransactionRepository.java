@@ -2,20 +2,19 @@ package com.StudentLibrary.Studentlibrary.Repositories;
 
 import com.StudentLibrary.Studentlibrary.Model.Transaction;
 import com.StudentLibrary.Studentlibrary.Model.TransactionStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import javax.transaction.Transactional;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
-@Transactional
-public interface TransactionRepository extends JpaRepository<Transaction,Integer> {
+@Repository
+public interface TransactionRepository extends MongoRepository<Transaction,String> {
 
 
-    @Query("select t from Transaction t where t.card.id=:card_id and t.book.id=:book_id and t.transactionStatus=:status and t.isIssueOperation=:isIssue")
-    public List<Transaction> findByCard_Book(@Param("card_id") int card_id,
-                                            @Param("book_id") int book_id,
+    @Query(value = "{'card.id': ?0},{'book.id': ?1},{transactionStatus: ?2},{isIssue:?3}")
+    public List<Transaction> findByCard_Book(@Param("card_id") String card_id,
+                                            @Param("book_id") String book_id,
                                             @Param("status") TransactionStatus status,
                                             @Param("isIssue") boolean isIssue);
 

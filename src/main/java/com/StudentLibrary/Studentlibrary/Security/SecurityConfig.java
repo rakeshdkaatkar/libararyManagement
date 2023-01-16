@@ -25,19 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/author/**").hasAuthority("ADMIN")
-                .antMatchers("/book/createBook").hasAuthority("ADMIN")
-                .antMatchers("/book/**").hasAnyAuthority("STUDENT","ADMIN")
-
-                .antMatchers(HttpMethod.PUT,"/student/**").hasAnyAuthority("STUDENT","ADMIN")
-                .antMatchers(HttpMethod.POST,"/student/**").hasAuthority("STUDENT")
-                .antMatchers(HttpMethod.GET,"/student/").hasAuthority("STUDENT")
-                .antMatchers("/student/**").hasAuthority("ADMIN")
-
-
-                .antMatchers(HttpMethod.POST,"/transaction/**").hasAuthority("STUDENT")
-                .antMatchers(HttpMethod.GET,"/transaction/").hasAuthority("STUDENT")
-                .antMatchers(HttpMethod.GET,"/transaction/all").hasAuthority("ADMIN")
                 .antMatchers("/").permitAll();
 
 

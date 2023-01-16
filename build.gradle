@@ -1,0 +1,28 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.Student-Library'
+version = '0.0.1-SNAPSHOT'
+
+description = """Student-library"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+
+    mavenLocal()
+     maven { url "https://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb', version:'2.4.3'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.4.3'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version:'2.4.3'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'2.4.3'
+}

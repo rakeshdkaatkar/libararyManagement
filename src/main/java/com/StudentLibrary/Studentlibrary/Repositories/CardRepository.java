@@ -1,19 +1,19 @@
 package com.StudentLibrary.Studentlibrary.Repositories;
 
 import com.StudentLibrary.Studentlibrary.Model.Card;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import com.StudentLibrary.Studentlibrary.Model.Student;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import javax.transaction.Transactional;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public interface CardRepository extends JpaRepository<Card,Integer> {
+@Repository
+public interface CardRepository extends MongoRepository<Card,String> {
 
-    @Modifying
-    @Query(value = "update card c set c.card_status=:new_card_status where c.id in(select card_id from student s where s.id=:student_id)",nativeQuery = true)
-    void deactivateCard(@Param("student_id") int student_id,@Param("new_card_status") String new_card_status);
+    @Query("{studentId: ?0}")
+    Card getCardByStudentId(@Param("student_id") String student_id);
 
 //    @Modifying
 //    @Query("update Card c set c.books=:#{#new_card.books} where c.id=:#{#new_card.id}")

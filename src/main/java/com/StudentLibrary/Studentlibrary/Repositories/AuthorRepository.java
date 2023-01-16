@@ -1,23 +1,20 @@
 package com.StudentLibrary.Studentlibrary.Repositories;
 
 import com.StudentLibrary.Studentlibrary.Model.Author;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
+
 
 @Transactional
-public interface AuthorRepository extends JpaRepository<Author,Integer> {
-    @Modifying
-    @Query("update Author a set a.name=:#{#new_author.name}," +
-            "a.email=:#{#new_author.email}," +
-            "a.age=:#{#new_author.age}," +
-            "a.country=:#{#new_author.country} where a.id=:#{#new_author.id}")
-    int updateAuthorDetails(@Param("new_author") Author new_author);
+@Repository
+public interface AuthorRepository extends MongoRepository<Author,String> {
+    @Query("{email: ?0}")
+    List<Author> getAuthorByEmail(String email);
 
-    @Modifying
-    @Query("delete Author a where a.id=:given_id")
-    int deleteCustom(@Param("given_id") int id);
+
 }

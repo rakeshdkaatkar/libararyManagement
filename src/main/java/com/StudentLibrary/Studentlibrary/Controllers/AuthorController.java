@@ -17,19 +17,19 @@ public class AuthorController {
     AuthorService authorService;
 
     @PostMapping("/createAuthor")
-    public ResponseEntity createAuthor(@RequestBody Author author){
-        authorService.createAuthor(author);
-        return new ResponseEntity("Author created", HttpStatus.CREATED);
+    public ResponseEntity createAuthor(@RequestBody Author author) throws Exception {
+        Author author1= authorService.createAuthor(author);
+        return new ResponseEntity(author1, HttpStatus.CREATED);
     }
     @PutMapping("/updateAuthor")
-    public ResponseEntity updateAuthor(@RequestBody Author author){
-        authorService.updateAuthor(author);
-        return new ResponseEntity("Auhtor upadted!!",HttpStatus.ACCEPTED);
+    public ResponseEntity updateAuthor(@RequestBody Author author) throws Exception {
+
+        return new ResponseEntity(authorService.updateAuthor(author),HttpStatus.ACCEPTED);
 
     }
 
     @DeleteMapping("/deleteAuthor")
-    public ResponseEntity deleteAuthor(@RequestParam("id") int id){
+    public ResponseEntity deleteAuthor(@RequestParam("id") String  id){
         authorService.deleteAuthor(id);
         return new ResponseEntity("Author deleted!!",HttpStatus.ACCEPTED);
 
@@ -37,6 +37,11 @@ public class AuthorController {
     @GetMapping("/all")
     public ResponseEntity getAuthors(){
         List<Author> authorList=authorService.getAllAuthor();
+        return new ResponseEntity(authorList,HttpStatus.OK);
+    }
+    @GetMapping("/getAuthorById")
+    public ResponseEntity getAuthors(@RequestParam("id") String  id){
+        Author authorList=authorService.getAuthorById(id);
         return new ResponseEntity(authorList,HttpStatus.OK);
     }
 

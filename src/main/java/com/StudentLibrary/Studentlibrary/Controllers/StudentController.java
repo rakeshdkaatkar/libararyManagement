@@ -29,7 +29,7 @@ public class StudentController {
         return new ResponseEntity(students,HttpStatus.OK);
     }
     @GetMapping("/findById")
-    public ResponseEntity getStudentById(@RequestParam("id") int id ){
+    public ResponseEntity getStudentById(@RequestParam("id") String id ){
         Student student= studentService.getById(id );
         return new ResponseEntity(student,HttpStatus.OK);
 
@@ -44,7 +44,7 @@ public class StudentController {
     @PostMapping("/createStudent")
     public ResponseEntity createStudent(@RequestBody Student student){
 
-        studentService.createStudent(student);
+        Student student1 = studentService.createStudent(student);
         //We use the email id as the username and the password as pass123
         BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
         User user=User
@@ -55,18 +55,18 @@ public class StudentController {
                 .build();
         userService.saveUser(user);
 
-        return new ResponseEntity("Student Successfully added to the system", HttpStatus.CREATED);
+        return new ResponseEntity(student1, HttpStatus.CREATED);
 
     }
 
     @PutMapping("/updateStudent")
     public ResponseEntity updateStudent(@RequestBody Student student){
-        int lines=studentService.updateStudent(student);
+        Student lines=studentService.updateStudent(student);
         return new ResponseEntity("Student updated",HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteStudent")
-    public ResponseEntity deleteStudent(@RequestParam("id")int id){
+    public ResponseEntity deleteStudent(@RequestParam("id")String id){
         studentService.deleteStudent(id);
         return new ResponseEntity("student successfully deleted!!",HttpStatus.OK);
     }
