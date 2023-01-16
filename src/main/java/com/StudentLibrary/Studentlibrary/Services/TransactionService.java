@@ -94,34 +94,40 @@ public class TransactionService {
     }
 
     public String returnBooks(String cardId, String bookId) throws Exception {
-        List<Transaction> transactions = transactionRepository.findByCard_Book(cardId, bookId, TransactionStatus.SUCCESSFUL, true);
-        if (transactions == null || transactions.size() == 0) {
-            throw new NoDataFoundException("This book is already returned or book not issued with this ID");
-        }
-        Transaction last_issue_transaction = transactions.get(transactions.size() - 1);
-        //Last transaction that has been done ^^^^
-        Date issueDate = last_issue_transaction.getTransactionDate();
-        Long issueTime = Math.abs(issueDate.getTime() - System.currentTimeMillis());
-        long number_of_days_passed = TimeUnit.MINUTES.convert(issueTime, TimeUnit.MILLISECONDS);
-        int fine = 0;
-        if (number_of_days_passed > max_days_allowed) {
-            fine = (int) Math.abs(number_of_days_passed - max_days_allowed) * fine_per_day;
-        }
-        Card card = last_issue_transaction.getCard();
-        Book book = last_issue_transaction.getBook();
-        book.setCardId(null);
-        book.setAvailable(true);
-        bookRepository.save(book);
-        Transaction new_transaction = new Transaction();
-        new_transaction.setBook(book);
-        new_transaction.setCard(card);
-        new_transaction.setFineAmount(fine);
-        new_transaction.setIsIssueOperation(false);
-        new_transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
-        transactionRepository.save(new_transaction);
-        last_issue_transaction.setTransactionStatus(TransactionStatus.COMPLETED);
-        transactionRepository.save(last_issue_transaction);
-        return new_transaction.getTransactionId() + ":Fine = " + new_transaction.getFineAmount();
+
+            List<Transaction> transactions = transactionRepository.findByCard_Book(cardId, bookId, TransactionStatus.SUCCESSFUL, true);
+            if(transactions == null || transactions.size() ==0){
+                throw new NoDataFoundException("This book is already returned or book not issued with this ID");
+            }
+            Transaction last_issue_transaction = transactions.get(transactions.size() - 1);
+            //Last transaction that has been done ^^^^
+            Date issueDate = last_issue_transaction.getTransactionDate();
+            Long issueTime = Math.abs(issueDate.getTime() - System.currentTimeMillis());
+            long number_of_days_passed = TimeUnit.MINUTES.convert(issueTime, TimeUnit.MILLISECONDS);
+            int fine = 0;
+            if (number_of_days_passed > max_days_allowed) {
+                fine = (int) Math.abs(number_of_days_passed - max_days_allowed) * fine_per_day;
+            }
+            Card card = last_issue_transaction.getCard();
+            Book book = last_issue_transaction.getBook();
+            book.setCardId(null);
+            book.setAvailable(true);
+            bookRepository.save(book);
+            Transaction new_transaction = new Transaction();
+            new_transaction.setBook(book);
+            new_transaction.setCard(card);
+            new_transaction.setFineAmount(fine);
+            new_transaction.setIsIssueOperation(false);
+            new_transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
+            transactionRepository.save(new_transaction);
+            last_issue_transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+            transactionRepository.save(last_issue_transaction);
+            Card cardNew = cardRepository.findById(cardId).get();
+            List<Book> books = cardNew.getBooks();
+            books.removeIf(a->a.getId().equals(bookId));
+            cardNew.setBooks(books);
+            cardRepository.save(cardNew);
+            return new_transaction.getTransactionId() + ":Fine = " + new_transaction.getFineAmount();
     }
 
     public List<Transaction> getAll() {
