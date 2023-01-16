@@ -12,7 +12,7 @@ import java.util.List;
 public interface TransactionRepository extends MongoRepository<Transaction,String> {
 
 
-    @Query(value = "{'card.id': ?0},{'book.id': ?1},{transactionStatus: ?2},{isIssue:?3}")
+    @Query(value = "{$and:[{'card.$_id': ?0},{'book.$_id': ?1},{'transactionStatus': ?2},{'isIssueOperation':?3}]}")
     public List<Transaction> findByCard_Book(@Param("card_id") String card_id,
                                             @Param("book_id") String book_id,
                                             @Param("status") TransactionStatus status,

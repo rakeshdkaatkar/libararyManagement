@@ -32,13 +32,6 @@ public class Transaction {
 
     @CreatedDate
     private Date transactionDate;
-
-    public Boolean getIssueOperation() {
-        return isIssueOperation;
-    }
-
-    public void setIssueOperation(Boolean issueOperation) {
-        isIssueOperation = issueOperation;
-    }
+    
 
 }

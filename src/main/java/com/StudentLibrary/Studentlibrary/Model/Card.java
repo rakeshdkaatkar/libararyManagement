@@ -22,7 +22,6 @@ public class Card {
 
     private String studentId;
 
-    private int totalBook;
 
     @CreatedDate
     private Date createdOn;
